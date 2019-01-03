@@ -29,8 +29,8 @@ void build()
     len[1]=-1,link[1]=1;
     len[2]=0,link[2]=1;
     idx=t=2;
-    int len=strlen(str+1);
-    for(int i=1; i<=len; i++) extend(i);
+    int l=strlen(str+1);
+    for(int i=1; i<=l; i++) extend(i);
 }
 
 int main()
