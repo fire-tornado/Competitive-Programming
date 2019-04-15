@@ -1,3 +1,5 @@
+#include <bits/stdc++.h>
+using namespace std;
 
 int lps[2000006];
 string txt,pat;
