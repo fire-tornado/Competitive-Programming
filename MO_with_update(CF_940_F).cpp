@@ -98,8 +98,7 @@ int main()
             mp[arr[i]]=++id;
             arr[i]=id;
         }
-        else
-            arr[i]=mp[arr[i]];
+        else arr[i]=mp[arr[i]];
     }
     int up=0,qr=0;
     REP(i,q)
