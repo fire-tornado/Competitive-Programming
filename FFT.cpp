@@ -81,86 +81,50 @@ int fy[] =              {0,0,1,-1};
 
 //// ***************************************************** GRAPH ***************************************************** ////
 
+typedef complex<double> base;
 
-struct complx{
-    long double real, img;
+void fft(vector<base> & a, bool invert) {
+	int n = (int)a.size();
 
-    inline complx(){
-        real = img = 0.0;
-    }
+	for (int i = 1, j = 0; i<n; ++i) {
+		int bit = n >> 1;
+		for (; j >= bit; bit >>= 1)j -= bit;
+		j += bit;
+		if (i < j)swap(a[i], a[j]);
+	}
 
-    inline complx(long double x){
-        real = x, img = 0.0;
-    }
-
-    inline complx(long double x, long double y){
-        real = x, img = y;
-    }
-
-    inline void operator += (complx &other){
-        real += other.real, img += other.img;
-    }
-
-    inline void operator -= (complx &other){
-        real -= other.real, img -= other.img;
-    }
-
-    inline complx operator + (complx &other){
-        return complx(real + other.real, img + other.img);
-    }
-
-    inline complx operator - (complx &other){
-        return complx(real - other.real, img - other.img);
-    }
-
-    inline complx operator * (complx& other){
-        return complx((real * other.real) - (img * other.img), (real * other.img) + (img * other.real));
-    }
-};
-
-void FFT(vector <complx> &ar, int n, int inv){
-    int i, j, l, len, len2;
-    const long double p = 4.0 * inv * acos(0.0);
-
-    for (i = 1, j = 0; i < n; i++){
-        for (l = n >> 1; j >= l; l >>= 1) j -= l;
-        j += l;
-        if (i < j) swap(ar[i], ar[j]);
-    }
-
-    for(len = 2; len <= n; len <<= 1) {
-        long double ang = 2 * PI / len * inv;
-        complx wlen(cos(ang), sin(ang));
-        for(i = 0; i < n; i += len) {
-            complx w(1);
-            for(j = 0; j < len / 2; j++) {
-                complx u = ar[i + j];
-                complx v = ar[i + j + len / 2] * w;
-                ar[i + j] = u + v;
-                ar[i + j + len / 2] = u - v;
-                w = w * wlen;
-            }
-        }
-    }
-
-    if (inv == -1){
-        long double tmp = 1.0 / n;
-        for (i = 0; i < n; i++) ar[i].real *= tmp;
-    }
+	for (int len = 2; len <= n; len <<= 1) {
+		double ang = 2 * PI / len * (invert ? -1 : 1);
+		base wlen(cos(ang), sin(ang));
+		for (int i = 0; i<n; i += len) {
+			base w(1);
+			for (int j = 0; j<len / 2; ++j) {
+				base u = a[i + j], v = a[i + j + len / 2] * w;
+				a[i + j] = u + v;
+				a[i + j + len / 2] = u - v;
+				w *= wlen;
+			}
+		}
+	}
+	if (invert)for (int i = 0; i<n; ++i)a[i] /= n;
 }
 
+vector<ll> Mul(vector<ll>& a, vector<ll>& b)
+{
+	vector<base> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+	int n = 1;
+	while (n < max(a.size(), b.size()))  n <<= 1;
+	n <<= 1;
+	fa.resize(n), fb.resize(n);
 
-vector <complx> Mul(const vector <complx> &x, const vector <complx> &y) {
-    int n = 1;
-    while(n <= x.size() + y.size()) n = n * 2;
-    vector <complx> A(n), B(n);
-    REP(i, x.size()) A[i] = x[i];
-    REP(i, y.size()) B[i] = y[i];
-    FFT(A, n, 1);
-    FFT(B, n, 1);
-    REP(i, n) A[i] = A[i] * B[i];
-    FFT(A, n, -1);
-    return A;
+	fft(fa, false), fft(fb, false);
+	for (int i = 0; i<n; ++i)fa[i] *= fb[i];
+	fft(fa, true);
+
+	vector<ll> res;
+	res.resize(n);
+	for (int i = 0; i<n; ++i)res[i] = round(fa[i].real());
+	return res;
 }
 
 int main()
@@ -170,7 +134,7 @@ int main()
     while(t--){
         string a,b;
         cin >> a >> b;
-        vector<complx>v1,v2;
+        vector<ll>v1,v2;
 
         int sign = 0;
         if(a[0] == '-'){
@@ -184,20 +148,20 @@ int main()
 
         for(int i = 0;i < a.size();i++){
             int d = a[i] - '0';
-            v1.push_back(complx(d));
+            v1.push_back(d);
         }
         for(int i = 0;i < b.size();i++){
             int d = b[i] - '0';
-            v2.push_back(complx(d));
+            v2.push_back(d);
         }
 
         reverse(all(v1)),reverse(all(v2)); //Reverse needed if v1 is in x^n+x^n-1+.....+x^1+1 form
-        vector<complx>v = Mul(v1,v2);
+        vector<ll>v = Mul(v1,v2);
 
         int carry = 0;
         vector<int>answer;
         for(int i = 0;i < v.size();i++){
-            int temp = round(v[i].real);
+            int temp = v[i];
             temp += carry;
             answer.push_back(temp % 10);
             carry = temp/10;
