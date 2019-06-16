@@ -3,7 +3,7 @@
 using namespace std;
 
 #define MAX             100005
-#define ll              long long
+#define LL              long long
 
 #define FOR(i,a,b)      for(int i=a;i<=b;i++)
 #define ROF(i,a,b)      for(int i=a;i>=b;i--)
@@ -11,14 +11,14 @@ using namespace std;
 
 struct point
 {
-    ll x,y;
+    LL x,y;
     bool operator < (const point &p) const
     {
         return x<p.x || (x==p.x && y<p.y);
     }
 } P[MAX],C[MAX];
 
-inline ll Cross(point &o,point &a,point &b)
+inline LL Cross(point &o,point &a,point &b)
 {
     return (a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x);
 }
