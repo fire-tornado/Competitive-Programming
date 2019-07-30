@@ -1,18 +1,18 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#define ll              long long
+#define LL              long long
 #define FOR(i,a,b)      for(int i=a;i<=b;i++)
 #define ROF(i,a,b)      for(int i=a;i>=b;i--)
 #define REP(i,b)        for(int i=0;i<b;i++)
 #define MEM(a,x)        memset(a,x,sizeof(a))
 
-ll mod;
-const ll N=6;
+LL mod;
+const LL N=6;
 
-void MatMul(ll A[N][N], ll B[N][N])
+void MatMul(LL A[N][N], LL B[N][N])
 {
-    ll R[N][N];
+    LL R[N][N];
     MEM(R,0);
     REP(i, N) REP(j, N) REP(k, N) R[i][j] = (R[i][j]%mod + (A[i][k] * B[k][j])%mod)%mod;
     REP(i, N) REP(j, N) B[i][j] = R[i][j];
@@ -20,7 +20,7 @@ void MatMul(ll A[N][N], ll B[N][N])
 }
 
 
-void MatPow(ll R[N][N],ll M[N][N],ll P)
+void MatPow(LL R[N][N],LL M[N][N],LL P)
 {
     while(P)
     {
@@ -34,7 +34,7 @@ void MatPow(ll R[N][N],ll M[N][N],ll P)
 int main()
 {
 
-    ll n,M[N][N],R[N][N]; // M is Co-efficient Matrix,R is Base case Matrix
+    LL n,M[N][N],R[N][N]; // M is Co-efficient Matrix,R is Base case Matrix
     //Take input values of M and R matrix
     //Input n,We have to find f(n)
     MatPow(R,M,n-2); // Here n-2 may changes in diffrent problems
