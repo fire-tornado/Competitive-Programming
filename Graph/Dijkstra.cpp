@@ -1,4 +1,4 @@
- #include<bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
 #define MAX             100005
@@ -55,9 +55,12 @@ struct point
 const int N=100005;
 vector<pii>V[N];
 int dis[N];
+bool vis[N];
 priority_queue<point>Q;
 void Dijkstra(int s)
 {
+    MEM(dis,0x3f3f3f3f);
+    MEM(vis,0);
     dis[s]=0;
     point get;
     get.name=s;
@@ -68,6 +71,8 @@ void Dijkstra(int s)
         point tmp=Q.top();
         Q.pop();
         int now=tmp.name;
+        if(vis[now]) continue;
+        vis[now]=1;
         REP(i,V[now].size())
         {
             int x=V[now][i].ff;
