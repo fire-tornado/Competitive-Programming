@@ -47,32 +47,29 @@ int fy[] =              {0,0,1,-1};
 const int N = 2000006;
 const ULL hs = 3797;
 
-ULL F[N], H[N];
+ULL F[N], FH[N], RH[N];
 char str[N];
 int n;
 
-ULL seg(int x, int y) { // hash value of the segment [x, y]
-    return H[y] - F[y - x + 1] * H[x - 1];
+ULL Fhash(int x, int y) {
+    return FH[y] - F[y - x + 1] * FH[x - 1];
+}
+
+ULL Rhash(int x, int y) {
+    return RH[x] - F[y - x + 1] * RH[y + 1];
 }
 
 int main()
 {
     F[0] = 1;
-    for(int i = 1; i < N; i++) F[i] = F[i - 1] * hs; // keeping the powers pre-calculated
-    scanf("%s", str + 1); // 1 indexing
+    for(int i = 1; i < N; i++) F[i] = F[i - 1] * hs;
+
+    scanf("%s", str + 1);
     n = strlen(str + 1);
 
-    H[0] = 0;
-    FOR(i, 1, n) H[i] = H[i - 1] * hs + str[i];
+    FH[0] = 0;
+    FOR(i, 1, n) FH[i] = FH[i - 1] * hs + str[i];
 
-    // now there will be qr queries and we need to check if seg[x, y] == seg[l, r]
-    int qr;
-    scanf("%d", &qr) ;
-    while(qr--) {
-        int x, y, l, r;
-        scanf("%d %d %d %d", &x, &y, &l, &r);
-        if(seg(x, y) == seg(l, r)) puts("YES");
-        else puts("NO");
-    }
-    return 0;
+    RH[n+1]=0;
+    ROF(i, n, 1) RH[i] = RH[i + 1] * hs + str[i];
 }
