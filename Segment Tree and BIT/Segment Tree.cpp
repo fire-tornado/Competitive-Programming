@@ -45,30 +45,42 @@ int fy[] =              {0,0,1,-1};
 #define popcount(x)     __builtin_popcount(x)
 
 int arr[MAX],tree[4*MAX];
-inline void build(int L,int R,int pos)
+void build(int L,int R,int pos)
 {
-    if(L==R)
-    {
+    if(L==R){
         tree[pos]=arr[L];
         return;
     }
     int mid=(L+R)/2;
     build(L,mid,pos*2+1);
     build(mid+1,R,pos*2+2);
-    tree[pos]=min(tree[pos*2+1],tree[pos*2+2]);
+    tree[pos]=max(tree[pos*2+1],tree[pos*2+2]);
     return;
 }
 
-inline int query(int ql,int qr,int L,int R,int pos)
+int query(int ql,int qr,int L,int R,int pos)
 {
-    if(ql>R or qr<L)
-        return MAX;
+    if(ql>R or qr<L) return -1;
     else if(ql<=L and qr>=R)
         return tree[pos];
     int mid=(L+R)/2;
     int p=query(ql,qr,L,mid,2*pos+1);
     int q=query(ql,qr,mid+1,R,2*pos+2);
-    return min(p,q);
+    return max(p,q);
+}
+
+void update(int idx,int L,int R,int pos,int val)
+{
+    if(idx>R or idx<L) return;
+    else if(idx<=L and idx>=R){
+        tree[pos]=val;
+        return;
+    }
+    int mid=(L+R)/2;
+    update(idx,L,mid,2*pos+1,val);
+    update(idx,mid+1,R,2*pos+2,val);
+    tree[pos]=max(tree[pos*2+1],tree[pos*2+2]);
+    return;
 }
 
 int main()
