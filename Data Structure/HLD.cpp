@@ -170,6 +170,29 @@ void update(int u,int val)
     return;
 }
 
+/*
+Find out the k'th node from the path u to v.
+k is 1 indexed i.e. u is 1st node.
+Look out for the case u=1,v=1,k=1.
+For that in LCA_build() put P[1][0]=1
+*/
+int kth_elm_onPath_uv(int u,int v,int k)
+{
+    int p=lca(u,v);
+    int d1=depth[u]-depth[p];
+    int d2=depth[v]-depth[p];
+    if(k==d1+1) return p;
+    else if(k<=d1){
+        ROF(i,17,0) if(depth[u]-depth[P[u][i]]<k) {k-=depth[u]-depth[P[u][i]];u=P[u][i];}
+        return u;
+    }
+    else{
+        k=d1+d2-k+2;
+        ROF(i,17,0) if(depth[v]-depth[P[v][i]]<k) {k-=depth[v]-depth[P[v][i]];v=P[v][i];}
+        return v;
+    }
+}
+
 int main()
 {
     int t;
