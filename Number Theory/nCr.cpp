@@ -13,22 +13,34 @@ using namespace std;
 #define ROF(i,a,b)      for(int i=a;i>=b;i--)
 #define REP(i,b)        for(int i=0;i<b;i++)
 
-const LL mod=10056;
-const int N=1005;
-LL ncr[N][N];
+const LL MOD=1e9+7;
+const int N=200005;
+LL fact[N],inv[N];
 
-void NCR(){
-    for(int i=0;i<N;i++){
-        for(int j=0;j<=i;j++){
-            if(i==0) ncr[i][j]=0;
-            else if(j==0 or j==i) ncr[i][j]=1;
-            else ncr[i][j]=(ncr[i-1][j-1]+ncr[i-1][j])%mod;
-        }
+LL BigMod(LL B,LL P,LL M){
+    LL R=1;
+    while(P>0){
+        if(P & 1) R=(R*B)%M;
+        P=P>>1;
+        B=(B*B)%M;
     }
+    return R%M;
 }
 
-int main()
-{
-    NCR();
+LL nCr(int n,int r){
+    LL up=fact[n];
+    LL down=(inv[r]*inv[n-r])%MOD;
+    return (up*down)%MOD;
+}
+
+void pre(){
+    fact[0]=1;
+    FOR(i,1,N-1) fact[i]=(fact[i-1]*(LL)i)%MOD;
+    inv[N-1]=BigMod(fact[N-1],MOD-2,MOD);
+    ROF(i,N-2,1) inv[i]=(inv[i+1]*(i+1))%MOD;
+    inv[0]=1;
+}
+
+int main(){
 
 }
