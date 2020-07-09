@@ -16,8 +16,6 @@ using namespace std;
 #define ROF(i,a,b)      for(int i=a;i>=b;i--)
 #define REP(i,b)        for(int i=0;i<b;i++)
 
-using namespace std;
-
 struct edge{
     int v, rev;
     int cap, cost, flow;
