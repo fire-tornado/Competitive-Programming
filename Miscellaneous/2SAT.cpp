@@ -1,100 +1,154 @@
-//https://codeforces.com/contest/228/problem/E
+//https://www.codechef.com/problems/VRTXCOVR
+
+/*
+* Example xor:
+    |a|b|
+    ------
+    |0|0| x or(a,b)
+    |0|1|
+    |1|0|
+    |1|1| x or(-a,-b)
+*Do OR of negation of values of variables for each undesired situation to make it impossible.
+
+
+* Edge (u->v) means that u implies v. If u is true, v must be true
+* (V1 or V2) into implication operations:
+    i)  If V1 = False, V2 must be true ---->   !V1 -> V2
+    ii) If V2 = False, V1 must be true ---->   !V2 -> V1
+* If b is reachable from a and a is assigned a true value, then b must also be true.
+
+*/
 
 #include<bits/stdc++.h>
 using namespace std;
 
-int n,m,id;
-vector<int>G[205],RG[205],assignment;
-stack<int>st;
-int vis[205];
+#define Fast            ios_base::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr);
+#define fWrite          freopen ("out.txt","w",stdout);
+#define TC              int t;cin >> t;FOR(tc,1,t)
+#define LL              long long
+#define ULL             unsigned long long
+#define ff              first
+#define ss              second
+#define pb              push_back
+#define pii             pair<int,int>
+#define all(a)          a.begin(),a.end()
+#define MEM(a,x)        memset(a,x,sizeof(a))
+#define FOR(i,a,b)      for(int i=a;i<=b;i++)
+#define ROF(i,a,b)      for(int i=a;i>=b;i--)
+#define REP(i,b)        for(int i=0;i<b;i++)
 
-void dfs1(int s)
-{
-    vis[s]=1;
-    for(int u:G[s])
-    {
-        if(!vis[u])
-            dfs1(u);
-    }
-    st.push(s);
-}
+const int N = 2e5+5;
 
-void dfs2(int s)
-{
-    vis[s]=id;
-    for(int u:RG[s])
-    {
-        if(!vis[u])
-            dfs2(u);
-    }
-}
+struct twoSat{
+    int n;
+    vector<int> Graph[2*N], Rev[2*N], V, sortedNodes;
+    bool state[2*N], vis[2*N];
+    int sccID[2*N];
 
-bool solve_2SAT()
-{
-    for(int i=1;i<=2*n;i++) if(!vis[i])
-        dfs1(i);
-    memset(vis,0,sizeof(vis));
-    id=1;
-    while(!st.empty())
+    void init(int _n)
     {
-        int u=st.top();
-        st.pop();
-        if(!vis[u])
-            dfs2(u),id++;
+        n = _n;
+        for(int i = 0; i<=2*n; i++) Graph[i].clear(), Rev[i].clear(), state[i] = false;
+        sortedNodes.clear();
     }
-    for(int i=1; i<=n; i++)
+
+    inline int actual(int a)
     {
-        if(vis[i]==vis[i+n])
-            return false;
-        if(vis[i]>vis[i+n])
-            assignment.push_back(i);
+        return (a<0) ? n-a : a;
     }
-    return true;
-}
+
+    inline int neg(int a)
+    {
+        return (a>n) ? a-n : n+a;
+    }
+
+    void dfs(int node)
+    {
+        vis[node] = true;
+        for(int v: Graph[node]) if(!vis[v]) dfs(v);
+        V.pb(node);
+    }
+
+    void dfsRev(int node, int id)
+    {
+        sortedNodes.pb(node);
+        vis[node] = true;
+        sccID[node] = id;
+        for(int v: Rev[node]) if(!vis[v]) dfsRev(v, id);
+    }
+
+    void buildSCC()
+    {
+        V.clear();
+        for(int i = 0; i<=2*n; i++) vis[i] = 0;
+        for(int i = 1; i<=2*n; i++) if(!vis[i]) dfs(i);
+        for(int i = 0; i<=2*n; i++) vis[i] = 0;
+        reverse(all(V));
+
+        int id = 0;
+        for(int u: V) if(!vis[u]) dfsRev(u, ++id);
+    }
+
+    bool topologicalOrder(int a, int b)
+    {
+        return sccID[a] < sccID[b];
+    }
+
+    bool satisfy()
+    {
+        buildSCC();
+        for(int i = 1; i<=n; i++) if(sccID[i] == sccID[i+n]) return false;
+
+        for(int i = (int)sortedNodes.size()-1; i>=0; i--)
+        {
+            int u = sortedNodes[i];
+            if(state[neg(u)] == false) state[u] = true;
+        }
+        return true;
+    }
+
+    void addEdge(int u, int v)
+    {
+        u = actual(u);
+        v = actual(v);
+        Graph[u].pb(v);
+        Rev[v].pb(u);
+    }
+
+    void addOr(int u, int v)
+    {
+        addEdge(-u, v);
+        addEdge(-v, u);
+    }
+
+    void addXor(int u, int v)
+    {
+        addOr(u, v);
+        addOr(-u, -v);
+    }
+
+};
 
 int main()
 {
-    cin >> n >> m;
-    for(int i=1;i<=m;i++)
-    {
-        int u,v,w;
-        cin >> u >> v >> w;
-        if(w)
-        {
-            // if (x1 ⊕ y1) ∧ (x2 ⊕ y2) ∧ ...  ∧ (xn ⊕ yn)
-            //(x ⊕ y) <=> (x => y) and (x' => y')
-            G[u].push_back(v);
-            G[u+n].push_back(v+n);
-            G[v].push_back(u);
-            G[v+n].push_back(u+n);
+    TC{
+        int n,m;
+        cin >> n >> m;
+        sat.init(n);
 
-            RG[u].push_back(v);
-            RG[u+n].push_back(v+n);
-            RG[v].push_back(u);
-            RG[v+n].push_back(u+n);
+        FOR(i,1,m){
+            int u,v;
+            cin >> u >> v;
+            sat.addOr(u,v);
         }
+
+        FOR(i,1,n/2) sat.addXor(2*i,2*i-1);
+
+        if(!sat.satisfy()) cout << "impossible\n";
         else{
-            // if (x1 ∨ y1) ∧ (x2 ∨ y2) ∧ ...  ∧ (xn ∨ yn)
-            //(x ∨ y) <=> (x' => y) and (y' => x)
-            G[u].push_back(v+n);
-            G[u+n].push_back(v);
-            G[v].push_back(u+n);
-            G[v+n].push_back(u);
-
-            RG[u].push_back(v+n);
-            RG[u+n].push_back(v);
-            RG[v].push_back(u+n);
-            RG[v+n].push_back(u);
+            cout << "possible\n";
+            FOR(i,1,n) cout << sat.state[i];
+            cout << '\n';
         }
-    }
-    bool f=solve_2SAT();
-    if(f)
-    {
-        cout << assignment.size() << '\n';
-        for(int i=0;i<assignment.size();i++) cout << assignment[i] << ' ';
-    }
-    else
-    {
-        cout << "Impossible\n";
     }
 }
