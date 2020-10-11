@@ -1,6 +1,7 @@
 //https://www.codechef.com/problems/VRTXCOVR
 
 /*
+
 * Example xor:
     |a|b|
     ------
@@ -8,7 +9,7 @@
     |0|1|
     |1|0|
     |1|1| x or(-a,-b)
-*Do OR of negation of values of variables for each undesired situation to make it impossible.
+* Do OR of negation of values of variables for each undesired situation to make it impossible.
 
 
 * Edge (u->v) means that u implies v. If u is true, v must be true
@@ -127,7 +128,7 @@ struct twoSat{
         addOr(-u, -v);
     }
 
-};
+}sat;
 
 int main()
 {
