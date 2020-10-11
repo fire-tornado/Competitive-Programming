@@ -128,6 +128,20 @@ struct twoSat{
         addOr(-u, -v);
     }
 
+    void forceTrue(int u)
+    {
+        addEdge(-u,u);
+    }
+
+    void forceFalse(int u)
+    {
+        addEdge(u,-u);
+    }
+
+    void implies(int u,int v)
+    {
+        addOr(-u,v);
+    }
 }sat;
 
 int main()
@@ -153,3 +167,4 @@ int main()
         }
     }
 }
+
