@@ -83,7 +83,7 @@ int main()
         V[u].pb(v);
         V[v].pb(-u);    //Reverse Graph
     }
-    FOR(i,1,n) if(vis[i]==0 and V[i].size()>0) dfs1(i);
+    FOR(i,1,n) if(vis[i]==0) dfs1(i);
     MEM(vis,0);
     id=0;
     while(!st.empty())
