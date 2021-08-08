@@ -47,38 +47,26 @@ int fy[] =              {0,0,1,-1};
 int n,m;
 int graph[105][105];
 
-void FloydWarshall()
-{
-    int i,j,k;
-    REP(k,n)
-    {
-        REP(i,n)
-        {
-            REP(j,n)
-            {
-                if(graph[i][k]+graph[k][j]<graph[i][j])
-                {
-                    graph[i][j]=graph[i][k]+graph[k][j];
-                }
+void FloydWarshall(){
+    REP(k,n){
+        REP(i,n){
+            REP(j,n){
+                if(graph[i][k]+graph[k][j]<graph[i][j]) graph[i][j]=graph[i][k]+graph[k][j];
                 //graph[i][j]=graph[i][j] || (graph[i][k] && graph[k][j]);
             }
         }
     }
 }
 
-int main()
-{
+int main(){
     cin >> n >> m;
-    REP(i,n)
-    {
-        REP(j,n)
-        {
+    REP(i,n){
+        REP(j,n){
             if(i==j) graph[i][j]=0;
             else graph[i][j]=1e7;
         }
     }
-    REP(i,m)
-    {
+    REP(i,m){
         int u,v,w;
         cin >> u >> v >> w;
         graph[u][v]=w;
