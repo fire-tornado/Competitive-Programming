@@ -10,17 +10,19 @@ using namespace std;
 int n;
 struct point{
     LL x,y;
-    int triarea(const point a,const point b)
-    {
+    int triarea(const point a,const point b){
         LL d=x*(a.y-b.y)+a.x*(b.y-y)+b.x*(y-a.y);
-        if(d>0) return 1;
-        else if(d<0) return -1;
-        return d;
+        if(d>0) return 1; //Counterclock
+        else if(d<0) return -1; //Clock
+        return d; //Linear
     }
 }P[MAX];
 
-bool bi_search(const point p)
-{
+bool bi_search(const point p){
+    ///Very important: Looking if point lies below initial two lines.
+    ///For this points should be given in counter clockwise.
+    ///Exclude colinear then <= & >=
+    if(P[0].triarea(P[1],p)<=0 or P[0].triarea(P[n-1],p)>=0) return false;
     point o=P[0];
     int l=1,h=n-1,m;
     while(h-l>1)
@@ -33,28 +35,22 @@ bool bi_search(const point p)
     if(o.triarea(P[l],p)<0) return false;
     if(P[l].triarea(P[h],p)<0) return false;
     if(P[h].triarea(o,p)<0) return false;
+    ///Exclude colinear points
+    if(P[l].triarea(p,P[h])==0) return false;
     return true;
 }
 
 int main()
 {
-    int t;
-    scanf("%d",&t);
-    FOR(tc,1,t)
+    scanf("%d",&n);
+    REP(i,n) scanf("%lld %lld",&P[i].x,&P[i].y);
+    int q;
+    scanf("%d",&q);
+    while(q--)
     {
-        scanf("%d",&n);
-        REP(i,n) scanf("%lld %lld",&P[i].x,&P[i].y);
-        int q;
-        scanf("%d",&q);
-        printf("Case %d:\n",tc);
-        while(q--)
-        {
-            point p;
-            scanf("%lld %lld",&p.x,&p.y);
-            if(P[0].triarea(P[1],p)<0 or P[0].triarea(P[n-1],p)>0) printf("n\n");
-            else if(bi_search(p)) printf("y\n");
-            else printf("n\n");
-        }
+        point p;
+        scanf("%lld %lld",&p.x,&p.y);
+        if(bi_search(p)) printf("y\n");
+        else printf("n\n");
     }
 }
-
